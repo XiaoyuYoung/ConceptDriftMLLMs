@@ -1,0 +1,20 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+datasets:
+  iNat18: # name of the dataset builder
+    data_type: images # [images|videos|features]
+
+    build_info:
+      annotations:
+        train:
+
+          url: /home/Data/iNat18/annotations/iNat18-train.json
+          storage: iNat18/annotations/iNat18-train.json
+
+
+      images:
+        url: /home/Data/iNat18/train_val2018
+        storage: iNat18/

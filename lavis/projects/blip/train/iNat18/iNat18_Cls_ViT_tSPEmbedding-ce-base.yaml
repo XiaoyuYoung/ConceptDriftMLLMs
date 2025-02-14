@@ -1,0 +1,68 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: blip_classification
+  model_type: tSP-base
+
+  vision_encoder:  "vit" # vit_base
+
+  load_pretrained: True
+  pretrained: "/home/Data/models/vit-base/pretrained-Vit_base-iNat18.pth"
+
+  freeze_vit: False
+  num_classes: 8142
+  cls_head: "tSP"
+  criterion: "ce"
+
+datasets:
+  iNat18:
+    vis_processor:
+        train:
+          name: "blip2_image_train"
+          image_size: 224
+        eval:
+          name: "blip_image_eval"
+          image_size: 224
+    text_processor:
+        train:
+          name: "blip_caption"
+          prompt: ""
+        eval:
+          name: "blip_caption"
+
+run:
+  task: multimodal_classification
+  # optimizer
+  lr_sched: "linear_warmup_cosine_lr"
+  init_lr: 1e-4
+  min_lr: 2e-5
+  weight_decay: 0.05
+  max_epoch: 30
+  # batch_size_train: 240 ## 3x45G
+  batch_size_train: 400 ## 2x80G 450
+  batch_size_eval: 2
+  num_workers: 32
+
+  max_len: 20
+  min_len: 5
+  num_beams: 3
+
+  seed: 42
+  output_dir: "output/BLIP/iNat18/tSP_Embedding"
+
+  amp: False
+  resume_ckpt_path: null
+
+  evaluate: False 
+  train_splits: ["train"]
+  # valid_splits: ["val"]
+  # test_splits: ["test"]
+
+  device: "cuda"
+  world_size: 2
+  dist_url: "env://"
+  distributed: True
+

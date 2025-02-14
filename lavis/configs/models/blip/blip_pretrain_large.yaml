@@ -1,0 +1,32 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: blip_pretrain
+
+  # vit encoder
+  vit_type: "large"
+  vit_grad_ckpt: True
+  vit_ckpt_layer: 5
+
+  image_size: 384
+  alpha: 0.4
+
+  # bert config
+  med_config_path: "configs/models/med_large_config.json"
+
+  embed_dim: 256
+
+  # generation configs
+  prompt: "a picture of "
+
+preprocess:
+    vis_processor:
+        train:
+          name: "blip_image_train"
+          image_size: 384
+    text_processor:
+        train:
+          name: "blip_caption"

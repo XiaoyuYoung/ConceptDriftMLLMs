@@ -1,0 +1,69 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: blip_classification
+  model_type: Vit-large-tSPEmbedding-ce-imagenetlt
+
+  vision_encoder:  "vit"
+
+  load_pretrained: True
+  pretrained: "/home/Data/models/vit-large/pretrained-Vit_large-ImageNet_LT.pth"
+
+
+  freeze_vit: True
+  num_classes: 1000
+  cls_head: "tSP"
+  criterion: "ce"
+  image_size: 384
+
+datasets:
+  ImageNetLT:
+    vis_processor:
+        train:
+          name: "blip2_image_train"
+          image_size: 384
+        eval:
+          name: "blip_image_eval"
+          image_size: 384
+    text_processor:
+        train:
+          name: "blip_caption"
+          prompt: ""
+        eval:
+          name: "blip_caption"
+
+run:
+  task: multimodal_classification
+  # optimizer
+  lr_sched: "linear_warmup_cosine_lr"
+  init_lr: 2e-5
+  min_lr: 1e-7
+  weight_decay: 0.05
+  max_epoch: 30
+  batch_size_train: 400
+  batch_size_eval: 2
+  num_workers: 32
+
+  max_len: 20
+  min_len: 5
+  num_beams: 3
+
+  seed: 42
+  output_dir: "output/BLIP/ImageNet-LT/tSP_Embedding-large"
+
+  amp: False
+  resume_ckpt_path: null
+
+  evaluate: False 
+  train_splits: ["train"]
+  # valid_splits: ["val"]
+  # test_splits: ["test"]
+
+  device: "cuda"
+  world_size: 2
+  dist_url: "env://"
+  distributed: True
+

@@ -1,0 +1,18 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+datasets:
+  PlacesLT: # name of the dataset builder
+    data_type: images # [images|videos|features]
+
+    build_info:
+      annotations:
+        train:
+          url: /home/Data/places-LT/annotations/places-LT-train.json
+          storage: places-LT/annotations/places-LT-train.json
+
+      images:
+        url: /home/Data/places-LT/images
+        storage: places-LT/

@@ -1,0 +1,42 @@
+
+model:
+  arch: blip_classification
+
+  load_pretrained: True
+  pretrained: "/home/Data/models/vit-base/pretrained-Vit_base-iNat18.pth"
+
+
+  use_distill: True
+  momentum: 0.995
+  alpha: 0.4
+
+  # vit encoder
+  vit_type: "base"
+  vit_grad_ckpt: False
+  vit_ckpt_layer: 0
+
+  image_size: 224
+
+  num_classes: 8142
+  cls_head: "tSP"
+  criterion: "ce"
+
+  # bert config
+  med_config_path: "configs/models/med_config.json"
+
+
+preprocess:
+    vis_processor:
+        train:
+          name: "blip2_image_train"
+          image_size: 224
+        eval:
+          name: "blip_image_eval"
+          image_size: 224
+    text_processor:
+        train:
+          name: "blip_caption"
+          prompt: ""
+        eval:
+          name: "blip_caption"
+
