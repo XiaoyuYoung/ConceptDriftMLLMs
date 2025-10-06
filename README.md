@@ -38,7 +38,8 @@ GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/datasets/MiaoMiaoYang/Ope
 
 We extend the open-source datasets, namely ImageNet-LT [1], iNatualist2018 [2] and Places-LT [1]. ImageNet-LT has 1,000 classes and contains 115.8k samples, with a maximum of 1,280 samples and a minimum of 5 samples for a category. Besides, it consists of 18k images for OOD detection. 
 Places-LT has 184.5K samples from 365 classes, with class samples ranging from 4,980 to 5. The iNaturalist 2018 is a large-scale species dataset collected in the natural world with 437.5K samples for 8,142 classes. We use the InstructBLIP[3] to generate the related caption of the image, with the prompt of *"What does this picture describe? Please describe in detail its size, location, color, and its relationship to the surroundings."*.
-s
+
+
 [1] Liu, Z., Z. Miao, X. Zhan, et al. Large-Scale Long-Tailed Recognition in an Open World. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pages 2532–2541. IEEE, 2019
 
 [2] Van Horn, G., O. Mac Aodha, Y. Song, et al. The INaturalist Species Classiﬁcation and Detection Dataset. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 8769–8778. 2018
@@ -46,3 +47,31 @@ s
 [3] Dai, W., J. Li, D. Li, et al. InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning. Advances in Neural Information Processing Systems, 36:49250–49267,2023
 
 ![OpenMMlo](figures/OpenMMlo.png)
+
+If you find this repository useful for your research, please consider citing our paper:
+
+
+```bibtex
+@inproceedings{yang2025adapting,
+  author = {Yang, Xiaoyu and Lu, Jie and Yu, En},
+  booktitle={The Thirteenth International Conference on Learning Representations},
+  editor = {Y. Yue and A. Garg and N. Peng and F. Sha and R. Yu},
+  pages = {90869--90891},
+  title = {Adapting Multi-modal Large Language Model to Concept Drift From Pre-training Onwards},
+  url = {https://proceedings.iclr.cc/paper_files/paper/2025/file/e25d87b8a42ee3f0d5b3ef741ca13031-Paper-Conference.pdf},
+  volume = {2025},
+  year = {2025}
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
