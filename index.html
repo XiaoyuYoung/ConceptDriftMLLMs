@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description"
+        content="Adapting Multi-modal Large Language Model to Concept Drift From Pre-training Onwards">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Adapting MLLMs to Concept Drift - ICLR 2025</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Noto Sans', sans-serif;
+        }
+
+        .publication-title {
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .author-block a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .author-block a:hover {
+            color: #0056b3;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #f5f7fa 0%, #eef2f5 100%);
+            padding: 4rem 0;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .content-section {
+            padding: 3rem 0;
+        }
+
+        .method-img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .method-img:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Highlighted Box for Key Idea */
+        .highlight-box {
+            background: #ffffff;
+            border: 1px solid #e2e6f0;
+            border-left: 5px solid #007bff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .is-red {
+            color: #E24B4A;
+            font-weight: bold;
+        }
+
+        .is-blue {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* Custom Table Styling */
+        .table-container {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        table thead th {
+            background-color: #f8f9fa !important;
+            color: #333 !important;
+            font-weight: 700;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f5f9 !important;
+        }
+
+        .button.is-dark {
+            background-color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .button.is-dark:hover {
+            background-color: #1a252f;
+            transform: scale(1.05);
+        }
+    </style>
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']], tags: 'none' },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+
+<body>
+
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop has-text-centered">
+                <h1 class="title is-1 publication-title">Adapting Multi-modal Large Language Model to Concept Drift From
+                    Pre-training Onwards</h1>
+                <h5 class="title is-4 publication-title" style="color: #555;">[ICLR 2025]</h5>
+
+                <div class="is-size-5 publication-authors mt-4">
+                    <span class="author-block"><a href="https://xiaoyuyoung.github.io/">Xiaoyu Yang</a></span>,
+                    <span class="author-block"><a href="https://profiles.uts.edu.au/Jie.Lu">Jie Lu</a></span>,
+                    <span class="author-block">En Yu</span>
+                </div>
+                <div class="is-size-6 publication-authors mt-2" style="color: #666;">
+                    <span class="author-block">Australian Artificial Intelligence Institute (AAII),</span> <br>
+                    <span class="author-block">University of Technology Sydney (UTS), Australia</span>
+                </div>
+
+                <div class="column has-text-centered mt-5">
+                    <div class="publication-links">
+                        <a href="https://github.com/XiaoyuYoung/ConceptDriftMLLMs" class="button is-dark is-rounded">
+                            <span class="icon"><i class="fab fa-github"></i></span>
+                            <span>Code & Model</span>
+                        </a>
+                        <a href="https://openreview.net/forum?id=b20VK2GnSs" class="button is-dark is-rounded">
+                            <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                            <span>Paper</span>
+                        </a>
+                        <a href="https://huggingface.co/datasets/MiaoMiaoYang/OpenMMlo"
+                            class="button is-dark is-rounded">
+                            <span class="icon">
+                                <p style="font-size:18px">🤗</p>
+                            </span>
+                            <span>OpenMMlo Dataset</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section content-section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-10">
+                    <h2 class="title is-3 publication-title">Abstract</h2>
+                    <div class="content has-text-justified">
+                        Multi-modal Large Language Models (MLLMs) frequently face challenges from concept drift when
+                        dealing with real-world streaming data, wherein distributions change unpredictably. This mainly
+                        includes gradual drift due to long-tailed data and sudden drift from Out-Of-Distribution (OOD)
+                        data, both of which have increasingly drawn the attention of the research community. While these
+                        issues have been extensively studied in the individual domain of vision or language, their
+                        impacts on MLLMs in concept drift settings remain largely underexplored.
+                        <br><br>
+                        In this paper, we reveal the susceptibility and vulnerability of Vision-Language (VL) models to
+                        significant biases arising from gradual drift and sudden drift, particularly in the
+                        pre-training. To effectively address these challenges, <b>we propose a unified framework that
+                            extends concept drift theory to the multi-modal domain</b>, enhancing the adaptability of
+                        the VL model to unpredictable distribution changes.
+                        <br><br>
+                        Additionally, a <b>T-distribution based drift adapter</b> is proposed to effectively mitigate
+                        the bias induced by the gradual drift, which also facilitates the model in distinguishing sudden
+                        distribution changes through explicit distribution modeling. Extensive experiments demonstrate
+                        our method enhances the efficiency and accuracy of image-text alignment in the pre-training of
+                        VL models, particularly in the concept drift scenario.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FINDINGS ==================== -->
+    <section class="section" style="background-color: #fcfcfc;">
+        <div class="container is-max-desktop">
+            <h2 class="title is-3 publication-title has-text-centered mb-6">Findings</h2>
+            <div class="columns is-centered">
+                <div class="column is-11">
+                    <div class="content has-text-justified">
+
+                        <div class="columns is-vcentered mt-5 mb-5">
+                            <div class="column is-7">
+                                <figure class="image">
+                                    <img src="./pretrained.png" alt="Image-Text Alignment in Pre-training"
+                                        style="border-radius: 8px; border: 1px solid #ddd; width: 100%; height: auto;" />
+                                    <figcaption class="has-text-centered mt-2 is-size-7" style="color: #666;">(a)
+                                        Image-Text Alignment in Pre-training</figcaption>
+                                </figure>
+                            </div>
+                            <div class="column is-5">
+                                <figure class="image">
+                                    <img src="./finetune.png" alt="Feature Space Allocation in Fine-tuning"
+                                        style="border-radius: 8px; border: 1px solid #ddd; width: 100%; height: auto;" />
+                                    <figcaption class="has-text-centered mt-2 is-size-7" style="color: #666;">(b)
+                                        Feature Space Allocation in Fine-tuning</figcaption>
+                                </figure>
+                            </div>
+                        </div>
+
+                        <p><strong>Pre-training:</strong> As shown above, pre-training VL models on imbalanced datasets
+                            severely degrades <strong>intra-class compactness</strong> and <strong>inter-class
+                                separability</strong> compared to balanced ones. This long-tailed drift not only
+                            disrupts image-text alignment in tail categories but also negatively impacts head
+                            categories. Furthermore, the model struggles to distinguish out-of-distribution (OOD)
+                            instances, biasing the underlying feature space and fundamentally disturbing pre-training.
+                        </p>
+
+
+
+                        <p><strong>Fine-tuning:</strong> Visualizing the classifier's feature space shows that tail
+                            drift severely compresses the representation of minority categories, allowing head
+                            categories to completely dominate. As a result, unexpected OOD samples become visually
+                            entangled with these dominant head categories, drastically reducing the model’s OOD
+                            separability in non-stationary fine-tuning scenarios.</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CONTRIBUTIONS ==================== -->
+    <section class="section" style="background-color: #f9fbfd;">
+        <div class="container is-max-desktop">
+            <h2 class="title is-3 publication-title has-text-centered mb-6">Key Contributions</h2>
+            <div class="columns is-centered">
+                <div class="column is-11">
+                    <!-- We can use a figure if rendered as an image or skip. I am inserting a styled list. -->
+                    <div class="content">
+                        <ul style="text-align: justify; line-height: 1.8; font-size: 1.05rem;">
+                            <li>
+                                <strong>Uncovering Pre-training Bias:</strong> We are the pioneers in revealing the
+                                unexplored impacts of concept drift to multi-modal large language models, especially in
+                                the image-text alignment in the pre-training and feature space allocation in the
+                                fine-tuning.
+                            </li>
+                            <li class="mt-3">
+                                <strong>Unified Concept Drift Framework:</strong> The concept drift theory is introduced
+                                and extended to multi-modal data. The novel <em>T-distributed spherical adapter</em> is
+                                proposed to perform tailed adaptation and OOD detection simultaneously.
+                            </li>
+                            <li class="mt-3">
+                                <strong>Superior Generalization & Robustness:</strong> In downstream tasks (long-tailed
+                                classification, OOD detection), ours demonstrates statistically significant improvements
+                                over competitive fundamental models (e.g. CLIP).
+                            </li>
+                            <li class="mt-3">
+                                <strong>OpenMMlo Dataset:</strong> We engineered a large-scale multi-modal long-tailed
+                                open-world dataset (<em>OpenMMlo</em>) composed of ~740,000 imbalanced image-caption
+                                pairs annotated for real-world scenarios.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== METHODOLOGY ==================== -->
+    <section class="section" style="background-color: #fcfcfc;">
+        <div class="container is-max-desktop">
+            <h2 class="title is-3 publication-title has-text-centered mb-5">Methodology</h2>
+            <div class="columns is-centered">
+                <div class="column is-11">
+
+                    <div class="highlight-box">
+                        <p
+                            style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#555;margin:0 0 8px;">
+                            Multi-modal Concept Drift Theory</p>
+                        <p style="font-size:14px;color:#444;line-height:1.65;">
+                            Assume that there are $N$ data streams corresponding to $N$ modalities, giving a set of
+                            multi-modal streams. The concept drift occurs at timestamp $t+1$, if
+                            $$P_{t}(S_{i}) \neq P_{t+1}(S_{i})$$
+                            This theory provides a holistic perspective linking <strong>gradual tail drift</strong> and
+                            <strong>sudden OOD drift</strong> into one unified mathematical formulation.
+                        </p>
+                    </div>
+
+                    <div class="content mt-5">
+                        <p>
+                            To address the drifting problem, we developed a <strong>T-distributed Adapter</strong>
+                            designed to replace the conventional hyperspherical standard. Our Thp probability density
+                            metric works differently:
+                        </p>
+                        <p class="has-text-centered">
+                            $$p(x^{(i)})=N_{X}(d)^{-1} \frac{2}{\kappa(1-\mu^{T}x^{(i)})},\quad x^{(i)}\sim
+                            \text{Thp}(\mu)$$
+                        </p>
+                        <p>
+                            The desirable <em>light-tailed property</em> of the proposed Thp prevents the compression of
+                            tailed categories and mitigates the crowding of feature space caused by long-tailed drift.
+                            This aligns visual and textual features correctly, avoiding minority collapse compared to
+                            models guided by traditional contrast loss.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ==================== RESULTS ==================== -->
+    <section class="section" style="background-color: #f9fbfd;">
+        <div class="container is-max-desktop">
+            <h2 class="title is-3 publication-title has-text-centered mb-5">Main Results</h2>
+            <div class="columns is-centered">
+                <div class="column is-11">
+                    <p class="mb-4"><strong>Long-Tailed ImageNet-LT Classification (Training from Scratch vs
+                            Fine-Tuning):</strong></p>
+                    <div class="table-container">
+                        <table class="table is-striped is-hoverable is-fullwidth"
+                            style="font-family: 'Google Sans', sans-serif; font-size: 0.95rem;">
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Backbone</th>
+                                    <th>Many-shot</th>
+                                    <th>Medium-shot</th>
+                                    <th>Few-shot</th>
+                                    <th><strong>Overall</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background-color: #f8f9fa;">
+                                    <td colspan="6" class="has-text-centered"><strong>Training from scratch</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>cRT</td>
+                                    <td>ResNet-50</td>
+                                    <td>61.8</td>
+                                    <td>46.2</td>
+                                    <td>27.3</td>
+                                    <td>49.6</td>
+                                </tr>
+                                <tr>
+                                    <td>RIDE</td>
+                                    <td>ResNet-50</td>
+                                    <td>68.2</td>
+                                    <td>53.8</td>
+                                    <td>36.0</td>
+                                    <td>56.9</td>
+                                </tr>
+                                <tr>
+                                    <td>PaCo</td>
+                                    <td>ResNet-50</td>
+                                    <td>68.2</td>
+                                    <td>58.7</td>
+                                    <td>41.0</td>
+                                    <td>60.0</td>
+                                </tr>
+                                <tr>
+                                    <td>ViT</td>
+                                    <td>ViT-B/16</td>
+                                    <td>50.5</td>
+                                    <td>23.5</td>
+                                    <td>6.9</td>
+                                    <td>31.6</td>
+                                </tr>
+                                <tr>
+                                    <td>MAE</td>
+                                    <td>ViT-B/16</td>
+                                    <td>74.7</td>
+                                    <td>48.2</td>
+                                    <td>19.4</td>
+                                    <td>54.5</td>
+                                </tr>
+                                <tr>
+                                    <td>DeiT</td>
+                                    <td>ViT-B/16</td>
+                                    <td>70.4</td>
+                                    <td>40.9</td>
+                                    <td>12.8</td>
+                                    <td>48.4</td>
+                                </tr>
+                                <tr>
+                                    <td>LiVT</td>
+                                    <td>ViT-B/16</td>
+                                    <td>73.6</td>
+                                    <td>56.4</td>
+                                    <td>41.0</td>
+                                    <td>60.9</td>
+                                </tr>
+                                <tr>
+                                    <td>LiVT&dagger;</td>
+                                    <td>ViT-B/16</td>
+                                    <td>76.4</td>
+                                    <td>59.7</td>
+                                    <td>42.7</td>
+                                    <td>63.8</td>
+                                </tr>
+                                <tr style="background-color: #eef5ff;">
+                                    <td><strong>Ours</strong></td>
+                                    <td>ViT-B/16</td>
+                                    <td>76.4</td>
+                                    <td>66.2</td>
+                                    <td>48.9</td>
+                                    <td>67.6</td>
+                                </tr>
+                                <tr style="background-color: #eef5ff;">
+                                    <td><strong>Ours&dagger; (Pre-trained)</strong></td>
+                                    <td>ViT-B/16</td>
+                                    <td class="is-red">77.2</td>
+                                    <td class="is-red">68.6</td>
+                                    <td class="is-red">51.3</td>
+                                    <td class="is-red">69.4</td>
+                                </tr>
+                                <tr style="background-color: #f8f9fa;">
+                                    <td colspan="6" class="has-text-centered"><strong>Only Fine-tuning</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>CLIP+ZS</td>
+                                    <td>Pre-trained ViT-B/16</td>
+                                    <td>82.0</td>
+                                    <td>70.4</td>
+                                    <td>69.6</td>
+                                    <td>70.5</td>
+                                </tr>
+                                <tr>
+                                    <td>CLIP+LP</td>
+                                    <td>Pre-trained ViT-B/16</td>
+                                    <td class="is-red">87.3</td>
+                                    <td>65.1</td>
+                                    <td>19.0</td>
+                                    <td>67.4</td>
+                                </tr>
+                                <tr>
+                                    <td>CLIP+FT</td>
+                                    <td>Pre-trained ViT-B/16</td>
+                                    <td>83.0</td>
+                                    <td>65.0</td>
+                                    <td>39.9</td>
+                                    <td>68.5</td>
+                                </tr>
+                                <tr>
+                                    <td>VL-LTR</td>
+                                    <td>Pre-trained ViT-B/16</td>
+                                    <td>84.5</td>
+                                    <td>74.6</td>
+                                    <td>59.3</td>
+                                    <td>77.2</td>
+                                </tr>
+                                <tr>
+                                    <td>LIFT</td>
+                                    <td>Pre-trained ViT-B/16</td>
+                                    <td>80.2</td>
+                                    <td>76.1</td>
+                                    <td>71.5</td>
+                                    <td>77.0</td>
+                                </tr>
+                                <tr style="background-color: #eef5ff;">
+                                    <td><strong>Ours</strong></td>
+                                    <td>Pre-trained ViT-B/16</td>
+                                    <td>79.5</td>
+                                    <td>76.5</td>
+                                    <td>74.1</td>
+                                    <td>77.2</td>
+                                </tr>
+                                <tr style="background-color: #eef5ff;">
+                                    <td><strong>Ours&dagger; (Fine-tuning)</strong></td>
+                                    <td>Pre-trained ViT-B/16</td>
+                                    <td>79.9</td>
+                                    <td class="is-red">76.8</td>
+                                    <td class="is-red">74.5</td>
+                                    <td class="is-red">77.6</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="is-size-7 mt-2" style="color:#777;">* Performance comparison over ImageNet-LT. Red colors
+                        indicate top results in respective learning settings.</p>
+                </div>
+            </div>
+
+            <div class="columns is-centered mt-6">
+                <div class="column is-11">
+                    <p class="mb-4"><strong>Out-Of-Distribution Detection:</strong></p>
+                    <div class="table-container shadow-table"
+                        style="background:#fff; border-radius:10px; padding:15px;">
+                        <table class="table is-bordered is-striped is-hoverable is-fullwidth" style="font-size: 14px;">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="has-text-centered" style="vertical-align: middle;">Methods
+                                    </th>
+                                    <th colspan="2" class="has-text-centered">SVHN</th>
+                                    <th colspan="2" class="has-text-centered">LSUN</th>
+                                    <th colspan="2" class="has-text-centered">iSUN</th>
+                                    <th colspan="2" class="has-text-centered">Texture</th>
+                                </tr>
+                                <tr>
+                                    <th class="has-text-centered">FPR &darr;</th>
+                                    <th class="has-text-centered">AUROC &uarr;</th>
+                                    <th class="has-text-centered">FPR &darr;</th>
+                                    <th class="has-text-centered">AUROC &uarr;</th>
+                                    <th class="has-text-centered">FPR &darr;</th>
+                                    <th class="has-text-centered">AUROC &uarr;</th>
+                                    <th class="has-text-centered">FPR &darr;</th>
+                                    <th class="has-text-centered">AUROC &uarr;</th>
+                                </tr>
+                            </thead>
+                            <tbody class="has-text-centered">
+                                <tr>
+                                    <td class="has-text-left">ProxyAnchor</td>
+                                    <td>87.2</td>
+                                    <td>82.4</td>
+                                    <td>37.2</td>
+                                    <td>91.7</td>
+                                    <td>70.0</td>
+                                    <td>85.0</td>
+                                    <td>65.6</td>
+                                    <td>85.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="has-text-left">CE + SimCLR</td>
+                                    <td>24.8</td>
+                                    <td>94.5</td>
+                                    <td>56.4</td>
+                                    <td>89.0</td>
+                                    <td>66.5</td>
+                                    <td>83.8</td>
+                                    <td>63.7</td>
+                                    <td>82.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="has-text-left">CSI</td>
+                                    <td>44.5</td>
+                                    <td>92.7</td>
+                                    <td>75.6</td>
+                                    <td>83.8</td>
+                                    <td>76.6</td>
+                                    <td>85.0</td>
+                                    <td>61.6</td>
+                                    <td>86.5</td>
+                                </tr>
+                                <tr>
+                                    <td class="has-text-left">SSD+</td>
+                                    <td>31.2</td>
+                                    <td>94.2</td>
+                                    <td>79.4</td>
+                                    <td>85.2</td>
+                                    <td>80.9</td>
+                                    <td>84.1</td>
+                                    <td>66.6</td>
+                                    <td>86.2</td>
+                                </tr>
+                                <tr>
+                                    <td class="has-text-left">KNN+</td>
+                                    <td>39.2</td>
+                                    <td>92.8</td>
+                                    <td>49.0</td>
+                                    <td>89.3</td>
+                                    <td>75.0</td>
+                                    <td>82.7</td>
+                                    <td>57.2</td>
+                                    <td>88.4</td>
+                                </tr>
+                                <tr>
+                                    <td class="has-text-left">CIDER</td>
+                                    <td>12.6</td>
+                                    <td>97.8</td>
+                                    <td>30.2</td>
+                                    <td>92.8</td>
+                                    <td>46.0</td>
+                                    <td>88.9</td>
+                                    <td class="is-red">35.6</td>
+                                    <td>92.3</td>
+                                </tr>
+                                <tr style="background-color: #eef5ff;">
+                                    <td class="has-text-left"><strong>Ours</strong></td>
+                                    <td class="is-red">8.3</td>
+                                    <td class="is-red">98.7</td>
+                                    <td class="is-red">20.3</td>
+                                    <td class="is-red">97.5</td>
+                                    <td class="is-red">32.5</td>
+                                    <td class="is-red">95.2</td>
+                                    <td>45.1</td>
+                                    <td class="is-red">96.3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== DATASET ==================== -->
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered">
+                <div class="column is-11">
+                    <h2 class="title is-3 publication-title">OpenMMlo Dataset</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            To study the impact of the long-tailed open world on the multi-modal large language models
+                            (MLLMs), we construct this dataset called OpenMMlo (<strong>Open</strong>
+                            <strong>M</strong>ulti-<strong>M</strong>odal <strong>Lo</strong>ng-tailed dataset),
+                            by extending the open-source datasets, namely ImageNet-LT, iNatualist2018 and
+                            Places-LT. ImageNet-LT has 1,000 classes and contains 115.8k samples, with a maximum of
+                            1,280 samples and a minimum of 5 samples for a category. Besides, it consists of 18k images
+                            for OOD detection. Places-LT has 184.5K samples from 365 classes, with class samples ranging
+                            from 4,980 to 5. The iNaturalist 2018 is a large-scale species dataset collected in the
+                            natural world with 437.5K samples for 8,142 classes. We use the InstructBLIP to generate
+                            the related caption of the image, with the prompt of "What does this picture describe?
+                            Please describe in detail its size, location, color, and its relationship to the
+                            surroundings.".
+                        </p>
+                    </div>
+
+                    <!-- Dataset Samples Gallery -->
+                    <div class="mt-6">
+                        <!-- Sample 1 -->
+                        <div class="box mb-5" style="border-radius: 8px;">
+                            <h4 class="title is-5 mb-4">Sample in Training Set</h4>
+                            <div class="columns is-vcentered">
+                                <div class="column is-4 has-text-centered">
+                                    <figure class="image is-inline-block">
+                                        <img src="./panda.jpg" alt="Panda in training set"
+                                            style="border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 250px; width: auto;">
+                                    </figure>
+                                </div>
+                                <div class="column is-8">
+                                    <p class="mb-3"><strong>Caption:</strong> The image depicts a [mask], also known as
+                                        a [mask], sitting on a branch of a tree. The [mask] is holding a leaf in its
+                                        mouth, which suggests that it might be eating or chewing on the plant. This
+                                        behavior is typical of [mask]s, as they primarily feed on bamboo shoots, leaves,
+                                        fruits, and insects. In the wild, [mask]s are found in the mountainous regions
+                                        of southern and southwestern China, Myanmar, and India.</p>
+                                    <p class="mb-0"><strong>Annotation:</strong> lesser panda, red panda, panda, bear
+                                        cat, cat bear, Ailurus fulgens</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sample 2 -->
+                        <div class="box mb-5" style="border-radius: 8px;">
+                            <h4 class="title is-5 mb-4">Sample in Test Set</h4>
+                            <div class="columns is-vcentered">
+                                <div class="column is-4 has-text-centered">
+                                    <figure class="image is-inline-block">
+                                        <img src="./man.jpg" alt="Man in test set"
+                                            style="border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 250px; width: auto;">
+                                    </figure>
+                                </div>
+                                <div class="column is-8">
+                                    <p class="mb-3"><strong>Caption:</strong> The picture depicts a young man sitting on
+                                        a bench, holding a [mask] in his hand. This suggests that he is either playing
+                                        the [mask] or contemplating playing it. The [mask] is a musical instrument that
+                                        is commonly associated with blues and folk music, and it can be used to create
+                                        melodic and rhythmic sounds. The presence of the [mask] in the image adds a
+                                        musical element to the scene.</p>
+                                    <p class="mb-0"><strong>Annotation:</strong> harmonica, mouth organ, harp, mouth
+                                        harp</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sample 3 -->
+                        <div class="box" style="border-radius: 8px;">
+                            <h4 class="title is-5 mb-4">Sample in Open Set</h4>
+                            <div class="columns is-vcentered">
+                                <div class="column is-4 has-text-centered">
+                                    <figure class="image is-inline-block">
+                                        <img src="./package.jpg" alt="Package in open set"
+                                            style="border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 250px; width: auto;">
+                                    </figure>
+                                </div>
+                                <div class="column is-8">
+                                    <p class="mb-0"><strong>Caption:</strong> The main object in the picture is an open
+                                        suitcase, which is a type of luggage. It is red in color and appears to be
+                                        medium-sized. The suitcase is located on the floor of a room. The suitcase is
+                                        partially filled with clothing items, including shirts, pants, and socks. It
+                                        appears that the suitcase is still in the process of being packed or unpacked,
+                                        as some items are visible on top of the suitcase while others are spilling out
+                                        of it. The suitcase is open, allowing easy access to the clothing items inside.
+                                        Overall, the picture provides a glimpse into the process of preparing for a trip
+                                        or organizing one's belongings.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="BibTeX" style="background-color: #f4f6f8;">
+        <div class="container is-max-desktop content">
+            <h2 class="title publication-title">BibTeX</h2>
+            <pre style="background: #e9ecef; border-radius: 8px;"><code>@inproceedings{yang2025adapting,
+  title={Adapting Multi-modal Large Language Model to Concept Drift From Pre-training Onwards},
+  author={Xiaoyu Yang and Jie Lu and En Yu},
+  booktitle={The Thirteenth International Conference on Learning Representations},
+  year={2025},
+  url={https://openreview.net/forum?id=b20VK2GnSs}
+}</code></pre>
+        </div>
+    </section>
+
+    <footer class="footer" style="padding: 2rem 1.5rem; background-color: #fafafa;">
+        <div class="container">
+            <div class="content has-text-centered">
+                <p style="color: #888; font-size: 0.9rem;">
+                    &copy; 2025 <a href="https://xiaoyuyoung.github.io/">Xiaoyu Yang</a>. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
