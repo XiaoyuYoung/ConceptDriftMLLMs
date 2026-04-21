@@ -178,15 +178,18 @@
                         our method enhances the efficiency and accuracy of image-text alignment in the pre-training of
                         VL models, particularly in the concept drift scenario.
                     </div>
-
-                    <div class="column">
-                        <figure class="image is-inline-block">
-                            <img src="./house.png" alt="Panda in training set"
-                                style="border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 250px; width: auto;">
-                        </figure>
+                    <div class="columns is-centered has-text-centered mt-5">
+                        <div class="column is-12">
+                            <figure class="image">
+                                <img src="https://raw.githubusercontent.com/XiaoyuYoung/ConceptDriftMLLMs/web/house.jpg"
+                                    alt="Concept Drift Framework Visualization" class="method-img">
+                                <figcaption class="has-text-centered mt-3 is-size-7"
+                                    style="color: #666; font-style: italic;">
+                                    The inspiration for this research stems from the television series "House M.D."
+                                </figcaption>
+                            </figure>
+                        </div>
                     </div>
-    
-                
                 </div>
             </div>
         </div>
@@ -200,6 +203,23 @@
             <div class="columns is-centered">
                 <div class="column is-11">
                     <div class="content has-text-justified">
+
+                        <p><strong>Pre-training:</strong> As shown above, pre-training VL models on imbalanced datasets
+                            severely degrades <strong>intra-class compactness</strong> and <strong>inter-class
+                                separability</strong> compared to balanced ones. This long-tailed drift not only
+                            disrupts image-text alignment in tail categories but also negatively impacts head
+                            categories. Furthermore, the model struggles to distinguish out-of-distribution (OOD)
+                            instances, biasing the underlying feature space and fundamentally disturbing pre-training.
+                        </p>
+
+
+
+                        <p><strong>Fine-tuning:</strong> Visualizing the classifier's feature space shows that tail
+                            drift severely compresses the representation of minority categories, allowing head
+                            categories to completely dominate. As a result, unexpected OOD samples become visually
+                            entangled with these dominant head categories, drastically reducing the model’s OOD
+                            separability in non-stationary fine-tuning scenarios.
+                        </p>
 
                         <div class="columns is-vcentered mt-5 mb-5">
                             <div class="column is-7">
@@ -219,22 +239,6 @@
                                 </figure>
                             </div>
                         </div>
-
-                        <p><strong>Pre-training:</strong> As shown above, pre-training VL models on imbalanced datasets
-                            severely degrades <strong>intra-class compactness</strong> and <strong>inter-class
-                                separability</strong> compared to balanced ones. This long-tailed drift not only
-                            disrupts image-text alignment in tail categories but also negatively impacts head
-                            categories. Furthermore, the model struggles to distinguish out-of-distribution (OOD)
-                            instances, biasing the underlying feature space and fundamentally disturbing pre-training.
-                        </p>
-
-
-
-                        <p><strong>Fine-tuning:</strong> Visualizing the classifier's feature space shows that tail
-                            drift severely compresses the representation of minority categories, allowing head
-                            categories to completely dominate. As a result, unexpected OOD samples become visually
-                            entangled with these dominant head categories, drastically reducing the model’s OOD
-                            separability in non-stationary fine-tuning scenarios.</p>
 
                     </div>
                 </div>
