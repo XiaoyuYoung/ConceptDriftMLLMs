@@ -12,7 +12,7 @@
 <a href='https://xiaoyuyoung.github.io/ConceptDriftMLLMs/'><img src='https://img.shields.io/badge/Project_Page-Concept Drift MLLMs-green' alt='Project Page'></a>
 
 <a href="https://arxiv.org/abs/2405.13459"><img src='https://img.shields.io/badge/arXiv-2405.13459-b31b1b' alt='arXiv'></a>
-<a href="https://openreview.net/forum?id=b20VK2GnSs"><img src='https://img.shields.io/badge/OpenReview-ICLR 2025-b31b1b' alt='OpenReview'></a>
+<a href="https://openreview.net/forum?id=b20VK2GnSs"><img src='https://img.shields.io/badge/OpenReview-ICLR 2025-blue' alt='OpenReview'></a>
 <a href='https://huggingface.co/datasets/MiaoMiaoYang/OpenMMlo'><img src='https://img.shields.io/badge/HuggingFace%F0%9F%A4%97-Dataset-yellow?style=plastic' alt='Dataset'></a>
 <!-- <a href='https://xiaoyuyoung.github.io/ConceptDriftMLLMs/'><img src='https://visitor-badge.laobi.icu/badge?page_id=XiaoyuYoung.ConceptDriftMLLMs' alt='Visitor Counter'></a> -->
 </div>
