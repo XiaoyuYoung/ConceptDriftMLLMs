@@ -18,6 +18,12 @@
 </div>
 
 
+## 🚩 News
+- **[2026.04]** 🔥 Our **OpenMMlo** dataset has reached over **2k+ downloads** on Hugging Face! Thanks for the community's support!
+- **[2025.02]** Our paper has been accepted by **ICLR 2025**!
+
+----
+
 This repository is a PyTorch implementation of concept drift aware vision language model in the long-tailed open world proposed in *Adapting Multi-modal Large Language Model to Concept Drift From Pre-training Onwards* (ICLR 2025)
 
 ![model](figures/framework.png)
